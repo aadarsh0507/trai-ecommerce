@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import '../screens/product_details_screen.dart';
+import '../utils/currency_utils.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({super.key});
@@ -62,7 +63,7 @@ class ProductItem extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          '\$${product.price.toStringAsFixed(2)}',
+                          CurrencyUtils.formatInrPrice(product.price),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

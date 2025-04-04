@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import './home_screen.dart';
-import './cart_screen.dart';
+import './orders_screen.dart';
 import './profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const CartScreen(),
+    const OrdersScreen(),
     const ProfileScreen(),
   ];
 
@@ -32,14 +32,20 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        elevation: 8,
+        selectedFontSize: 13,
+        unselectedFontSize: 13,
+        iconSize: 26,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
+            icon: Icon(Icons.shopping_bag),
+            label: 'Orders',
+            activeIcon: Icon(Icons.shopping_bag, color: Colors.deepPurple),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

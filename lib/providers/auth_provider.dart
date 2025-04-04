@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class AuthProvider with ChangeNotifier {
   String? _token;
@@ -9,19 +11,21 @@ class AuthProvider with ChangeNotifier {
   String? get userId => _userId;
 
   Future<void> signup(String email, String password) async {
-    // TODO: Implement actual signup logic with your backend
-    // For demo purposes, we'll just simulate a successful signup
+    // Mock signup - always succeed for demo purposes
     _token = 'demo_token';
     _userId = email;
     notifyListeners();
   }
 
   Future<void> login(String email, String password) async {
-    // TODO: Implement actual login logic with your backend
-    // For demo purposes, we'll just simulate a successful login
-    _token = 'demo_token';
-    _userId = email;
-    notifyListeners();
+    // Mock login with hardcoded credentials
+    if (email == 'test@example.com' && password == 'password123') {
+      _token = 'demo_token';
+      _userId = email;
+      notifyListeners();
+    } else {
+      throw Exception('Invalid credentials');
+    }
   }
 
   void logout() {

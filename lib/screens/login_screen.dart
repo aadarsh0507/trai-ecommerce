@@ -103,6 +103,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icon(Icons.lock),
                   ),
                   obscureText: true,
+                  enableInteractiveSelection: true,
+                  keyboardType: TextInputType.visiblePassword,
+                  autocorrect: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
