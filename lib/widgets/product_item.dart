@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import '../screens/product_details_screen.dart';
@@ -36,38 +37,49 @@ class ProductItem extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    Image.network(
-                      product.imageUrl,
+                    CachedNetworkImage(
+                      imageUrl: product.imageUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[200],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 50,
-                          ),
-                        );
-                      },
+                      height: MediaQuery.of(context).size.width * 0.4,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          size: 50,
+                        ),
+                      ),
                     ),
                     Positioned(
-                      right: 8,
-                      top: 8,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
                       child: Container(
+                        width: double.infinity,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                          vertical: 4,
+                          vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).primaryColor.withOpacity(0.8),
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(15),
+                          ),
                         ),
                         child: Text(
                           CurrencyUtils.formatInrPrice(product.price),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),

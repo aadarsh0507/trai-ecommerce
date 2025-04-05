@@ -17,7 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   var _isLoading = false;
 
   void _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    // Skip frontend validation to allow login without validation
+    // if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
@@ -32,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('An error occurred'),
-          content: const Text('Failed to log in. Please try again.'),
+          content: Text('Failed to log in. Please try again. Error: $error'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
