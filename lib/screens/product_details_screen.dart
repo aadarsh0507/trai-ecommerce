@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import '../utils/currency_utils.dart';
@@ -24,20 +25,24 @@ class ProductDetailsScreen extends StatelessWidget {
             Hero(
               tag: product.id,
               child: SizedBox(
-                height: 300,
+                height: MediaQuery.of(context).size.height * 0.4,
                 width: double.infinity,
-                child: Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                      ),
-                    );
-                  },
+                child: CachedNetworkImage(
+                  imageUrl: product.imageUrl,
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[200],
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      size: 50,
+                    ),
+                  ),
                 ),
               ),
             ),

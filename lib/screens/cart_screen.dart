@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../models/product.dart';
+import '../utils/currency_utils.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -9,8 +10,10 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Shopping Cart'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Consumer<CartProvider>(
         builder: (context, cart, child) {
@@ -22,7 +25,7 @@ class CartScreen extends StatelessWidget {
                   Icon(
                     Icons.shopping_cart_outlined,
                     size: 100,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -43,7 +46,7 @@ class CartScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
                   itemCount: cart.items.length,
                   itemBuilder: (ctx, i) {
                     final item = cart.items.values.toList()[i];
@@ -51,10 +54,13 @@ class CartScreen extends StatelessWidget {
                     return Dismissible(
                       key: ValueKey(item.id),
                       background: Container(
-                        color: Theme.of(context).colorScheme.error,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.error,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.only(right: 20),
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
                         child: const Icon(
                           Icons.delete,
                           color: Colors.white,
@@ -66,53 +72,88 @@ class CartScreen extends StatelessWidget {
                         cart.removeItem(productId);
                       },
                       child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(item.imageUrl),
-                              radius: 30,
-                            ),
-                            title: Text(item.productName),
-                            subtitle: Text(
-                              'Total: \$${(item.price * item.quantity).toStringAsFixed(2)}',
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    cart.decreaseQuantity(productId);
-                                  },
-                                ),
-                                Text(
-                                  '${item.quantity}',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    cart.addItem(Product(
-                                      id: productId,
-                                      name: item.productName,
-                                      price: item.price,
-                                      imageUrl: item.imageUrl,
-                                      description: '',
-                                      stockQuantity: 0,
-                                      categories: [],
-                                    ));
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Item quantity increased'),
-                                        duration: Duration(seconds: 2),
-                                      ),
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  item.imageUrl,
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 80,
+                                      height: 80,
+                                      color: Colors.grey[200],
+                                      child: const Icon(Icons.image_not_supported),
                                     );
                                   },
                                 ),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.productName,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      CurrencyUtils.formatInrPrice(item.price * item.quantity),
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove),
+                                    onPressed: () {
+                                      cart.decreaseQuantity(productId);
+                                    },
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: Text(
+                                      '${item.quantity}',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () {
+                                      cart.addItem(Product(
+                                        id: productId,
+                                        name: item.productName,
+                                        price: item.price,
+                                        imageUrl: item.imageUrl,
+                                        description: '',
+                                        stockQuantity: 0,
+                                        categories: [],
+                                      ));
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -122,6 +163,16 @@ class CartScreen extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      offset: const Offset(0, -4),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -132,7 +183,7 @@ class CartScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         Text(
-                          '\$${cart.totalAmount.toStringAsFixed(2)}',
+                          CurrencyUtils.formatInrPrice(cart.totalAmount),
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -145,7 +196,6 @@ class CartScreen extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Implement checkout
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Checkout functionality coming soon!'),
@@ -155,7 +205,7 @@ class CartScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
